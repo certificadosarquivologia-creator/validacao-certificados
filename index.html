@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validação de Certificado</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f4f6f9;
+  padding: 20px;
+}
+
+.box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: inline-block;
+  text-align: left;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.ok { color: green; font-weight: bold; }
+.erro { color: red; font-weight: bold; }
+</style>
+
+</head>
+
+<body>
+
+<h2>Validação de Certificado</h2>
+
+<div id="resultado">Carregando...</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const codigo = params.get("codigo");
+
+// 🔥 https://script.google.com/macros/s/AKfycbw3Dd1TcZixKgrEoQidw-VH7GDZAUZ3wOXhguz_qjcJ8fqD-rEi-_kb-5K3m1gc34TVLw/exec
+const API = "https://script.google.com/macros/s/AKfycbw3Dd1TcZixKgrEoQidw-VH7GDZAUZ3wOXhguz_qjcJ8fqD-rEi-_kb-5K3m1gc34TVLw/exec";
+
+fetch(API + "?codigo=" + codigo)
+.then(r => r.json())
+.then(data => {
+
+  if (data.status === "VALIDO") {
+
+    document.getElementById("resultado").innerHTML = `
+      <div class="box">
+        <p class="ok">✔ Certificado Válido</p>
+        <p><b>Nome:</b> ${data.nome}</p>
+        <p><b>Curso:</b> ${data.curso}</p>
+        <p><b>Matrícula:</b> ${data.matricula}</p>
+        <p><b>Código:</b> ${data.codigo}</p>
+      </div>
+    `;
+
+  } else {
+    document.getElementById("resultado").innerHTML =
+      "<p class='erro'>❌ Certificado inválido</p>";
+  }
+
+});
+
+</script>
+
+</body>
+</html>
