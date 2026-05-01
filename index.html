@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
 <style>
 body {
   font-family: Arial;
-  text-align: center;
   background: #f4f6f9;
+  text-align: center;
   padding: 20px;
 }
 
@@ -21,10 +21,13 @@ body {
   text-align: left;
   margin-top: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 400px;
 }
 
 .ok { color: green; font-weight: bold; }
 .erro { color: red; font-weight: bold; }
+
+h2 { color: #003366; }
 </style>
 
 </head>
@@ -33,38 +36,50 @@ body {
 
 <h2>Validação de Certificado</h2>
 
-<div id="resultado">Carregando...</div>
+<div id="resultado">Validando...</div>
 
 <script>
 
 const params = new URLSearchParams(window.location.search);
 const codigo = params.get("codigo");
 
-// 🔥 https://script.google.com/macros/s/AKfycbw3Dd1TcZixKgrEoQidw-VH7GDZAUZ3wOXhguz_qjcJ8fqD-rEi-_kb-5K3m1gc34TVLw/exec
+// 🔥 SEU APPS SCRIPT (já fornecido)
 const API = "https://script.google.com/macros/s/AKfycbw3Dd1TcZixKgrEoQidw-VH7GDZAUZ3wOXhguz_qjcJ8fqD-rEi-_kb-5K3m1gc34TVLw/exec";
 
-fetch(API + "?codigo=" + codigo)
-.then(r => r.json())
-.then(data => {
+if (!codigo) {
+  document.getElementById("resultado").innerHTML =
+    "<p class='erro'>❌ Código não informado</p>";
+} else {
 
-  if (data.status === "VALIDO") {
+  fetch(API + "?codigo=" + codigo)
+  .then(r => r.json())
+  .then(data => {
 
-    document.getElementById("resultado").innerHTML = `
-      <div class="box">
-        <p class="ok">✔ Certificado Válido</p>
-        <p><b>Nome:</b> ${data.nome}</p>
-        <p><b>Curso:</b> ${data.curso}</p>
-        <p><b>Matrícula:</b> ${data.matricula}</p>
-        <p><b>Código:</b> ${data.codigo}</p>
-      </div>
-    `;
+    if (data.status === "VALIDO") {
 
-  } else {
+      document.getElementById("resultado").innerHTML = `
+        <div class="box">
+          <p class="ok">✔ Certificado Válido</p>
+          <p><b>Nome:</b> ${data.nome}</p>
+          <p><b>Vínculo:</b> ${data.vinculo || ''}</p>
+          <p><b>Curso:</b> ${data.curso}</p>
+          <p><b>Matrícula:</b> ${data.matricula}</p>
+          <p><b>Código:</b> ${data.codigo}</p>
+        </div>
+      `;
+
+    } else {
+      document.getElementById("resultado").innerHTML =
+        "<p class='erro'>❌ Certificado inválido</p>";
+    }
+
+  })
+  .catch(() => {
     document.getElementById("resultado").innerHTML =
-      "<p class='erro'>❌ Certificado inválido</p>";
-  }
+      "<p class='erro'>Erro ao consultar sistema</p>";
+  });
 
-});
+}
 
 </script>
 
